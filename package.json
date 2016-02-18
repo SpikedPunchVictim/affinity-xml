@@ -1,0 +1,22 @@
+{
+  "name": "gaia-xml",
+  "version": "1.0.0",
+  "description": "Provides XML saving/loading for gaia projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gaia",
+    "xml"
+  ],
+  "author": "William Hoopes",
+  "license": "ISC",
+  "dependencies": {
+    "xml2js": "^0.4.16",
+    "xmlbuilder": "^4.2.1"
+  },
+  "devDependencies": {
+    "gaia": "git+https://github.com/SpikedPunchVictim/gaia.git"
+  }
+}
