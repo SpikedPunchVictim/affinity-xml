@@ -5,7 +5,7 @@ var gxml = require('./index.js');
 
 gaia.use(gxml);
 
-let loadTesting = true;
+let loadTesting = false;
 
 var project = gaia.create();
 gxml.add(project, './__test');
@@ -21,18 +21,18 @@ if(loadTesting) {
    var four = project.root.children.new('four');
 
    var model = project.root.models.new('model_one');
-   model.members.new('int_mem', gaia.types.int.create(64));
-   model.members.new('uint_mem', gaia.types.int.create(1024));
-   model.members.new('bool_mem', gaia.types.bool.create(true));
-   model.members.new('string_mem', gaia.types.string.create('some random string'));
-   model.members.new('dec_mem', gaia.types.decimal.create(14.32));
-   var intCollectionMem = model.members.new('collection_int', types.collection.create(types.int.type()));
-   intCollectionMem.value.add(types.int.create(1));
-   intCollectionMem.value.add(types.int.create(2));
-   intCollectionMem.value.add(types.int.create(3));
-   intCollectionMem.value.add(types.int.create(4));
-   intCollectionMem.value.add(types.int.create(5));
-   intCollectionMem.value.add(types.int.create(6));
+   model.members.new('int_mem', gaia.types.int.value(64));
+   model.members.new('uint_mem', gaia.types.int.value(1024));
+   model.members.new('bool_mem', gaia.types.bool.value(true));
+   model.members.new('string_mem', gaia.types.string.value('some random string'));
+   model.members.new('dec_mem', gaia.types.decimal.value(14.32));
+   var intCollectionMem = model.members.new('collection_int', types.collection.value(types.int.type()));
+   intCollectionMem.value.add(types.int.value(1));
+   intCollectionMem.value.add(types.int.value(2));
+   intCollectionMem.value.add(types.int.value(3));
+   intCollectionMem.value.add(types.int.value(4));
+   intCollectionMem.value.add(types.int.value(5));
+   intCollectionMem.value.add(types.int.value(6));
 
    console.log('Collection Member: %j (%s)', intCollectionMem.value, intCollectionMem.value.length);
    // for(let value of intCollectionMem.value) {
@@ -40,12 +40,12 @@ if(loadTesting) {
    // }
 
 
-   var collectionOfStringCollections = gaia.types.collection.create(gaia.types.collection.type(gaia.types.string.type()));
+   var collectionOfStringCollections = gaia.types.collection.value(gaia.types.collection.type(gaia.types.string.type()));
    var collectionCollectionMem = model.members.new('collection_of_string_collections', collectionOfStringCollections);
 
    var instance = project.root.instances.new('instance_one', model);
    let gg = instance.fields.at(0);
-   gg.value = types.int.create(13);
+   gg.value = types.int.value(13);
 
    one.children.new('one_nspace_one');
    one.children.new('one_nspace_two');

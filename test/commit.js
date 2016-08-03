@@ -1,99 +1,215 @@
 'use strict';
 
+var path = require('path');
 var chai = require('chai');
+var spies = require('chai-spies');
 var expect = chai.expect;
 var gaia = require('gaia');
 var types = gaia.types;
+var gxml = require('../index.js');
+var rimraf = require('rimraf').sync;
 
-function buildProject() {
+chai.use(spies);
+
+let testPath = path.join(__dirname, '__test');
+
+function setup() {
    let proj = gaia.create();
 
-   var one = proj.root.children.new('one');
-   var two = proj.root.children.new('two');
-   var three = proj.root.children.new('three');
-
-   var model = proj.root.models.new('model_one');
-   model.members.new('int_mem', types.int.value(64));
-   model.members.new('uint_mem', types.int.value(1024));
-   model.members.new('bool_mem', types.bool.value(true));
-   model.members.new('string_mem', types.string.value('some random string'));
-   model.members.new('dec_mem', types.decimal.value(14.32));
-   
-   model.members.new('collection_int', types.collection.value(types.int.type()))
-      .value.add(types.int.value(1))
-      .add(types.int.value(2))
-   	.add(types.int.value(3))
-   	.add(types.int.value(4))
-   	.add(types.int.value(5))
-   	.add(types.int.value(6));
-
-   var collectionOfStringCollections =types.collection.value(gaia.types.collection.type(gaia.types.string.type()));
-   var collectionCollectionMem = model.members.new('collection_of_string_collections', collectionOfStringCollections);
-
-   var instance = proj.root.instances.new('instance_one', model);
-   instance.fields.get('int_mem').value = types.int.value(13);
-
-   one.children.new('one_nspace_one');
-   one.children.new('one_nspace_two');
-   one.children.new('one_nspace_three');
-
-   one.models.new('one_model_one');
-   one.models.new('one_model_two');
-   one.models.new('one_model_three');
-
-   one.instances.new('one_instance_one', model);
-   one.instances.new('one_instance_two', model);
-   one.instances.new('one_instance_three', model);
-
-   two.children.new('two_nspace_one');
-   two.children.new('two_nspace_two');
-   two.children.new('two_nspace_three');
-
-   two.models.new('two_model_one');
-   two.models.new('two_model_two');
-   two.models.new('two_model_three');
-
-   two.instances.new('two_instance_one', model);
-   two.instances.new('two_instance_two', model);
-   two.instances.new('two_instance_three', model);
-
-   three.children.new('three_nspace_one');
-   three.children.new('three_nspace_two');
-   three.children.new('three_nspace_three');
-
+   gaia.use(gxml);
+   gxml.add(proj, testPath);
    return proj;
 }
 
-function validateProject(project) {
-   // 12 namespaces
-   let count = 0;
-   for(let nspace of project.namespaces) {
-      count++;
+function teardown() {
+   try {
+      rimraf(testPath);
+   } catch(ex) {
+      // Ignore
+   }
+   
+}
+
+class Fill {
+   static values() {
+      let result = [];
+      let primitives = [
+         types.bool.value(),
+         types.decimal.value(),
+         types.string.value(),
+         types.int.value(),
+         types.uint.value()
+      ];
+
+      result = result.concat(primitives);
+
+      primitives.forEach(val => {
+         result.push(types.collection.value(val.type));
+      });
+
+      return result;
    }
 
-   // Validate namespaces
-   expect(count).to.equal(12);
-   expect(project.root.children.length).to.equal(3);
+   static model(mod) {
+      let result = [];
+      let index = 0;
 
-   let one = project.search.namespace.find('one');
-   let two = project.search.namespace.find('two');
-   let three = project.search.namespace.find('three');
+      Fill.values().forEach(val => {
+         let info = { name: `member_${index}`, index: index++, value: val };
+         mod.members.new(info.name, val);
+         result.push(info);
+      });
 
-   count = 0;
-   for(let model of project.models) {
-      count++;
-   }
-
-   expect(count).to.equal(7);
-
-   count = 0;
-   for(let model of project.instances) {
-      count++;
+      return result;      
    }
 }
 
-describe('validate', () => {
-   it('should have built the project properly', () => {
-      validateProject(buildProject());
-   });   
+describe('Read <-> Write', () => {
+   afterEach(function () {
+      teardown();
+   })
+
+   it('Namespaces', function (done) {
+      let proj = setup();
+
+      let one = proj.root.children.new('one');
+      let two = proj.root.children.new('two');
+      let three = one.children.new('three');
+      let four = three.children.new('four');
+
+      proj.commit()
+         .then(_ => {
+            proj = setup();
+            return proj.open();
+         })
+         .then(_ => {
+            one = proj.root.children.findByName('one');
+            two = proj.root.children.findByName('two');
+            three = one.children.findByName('three');
+            four = three.children.findByName('four');
+
+            expect(one).not.to.be.null;
+            expect(two).not.to.be.null;
+            expect(three).not.to.be.null;
+            expect(four).not.to.be.null;
+            done();
+         })
+         .catch(err => {
+            done(err);
+         });
+   });
+
+   it('Models', function (done) {
+      let proj = setup();
+
+      let one = proj.root.children.new('one');
+      let two = one.children.new('two');
+
+      let model_one = one.models.new('model_one');
+      let model_two = two.models.new('model_two');
+
+      let oneInfo = Fill.model(model_one);
+      let twoInfo = Fill.model(model_two);
+
+      proj.commit()
+         .then(_ => {
+            proj = setup();
+            return proj.open();
+         })
+         .then(_ => {
+            one = proj.root.children.findByName('one');
+            expect(one).not.to.be.null;
+
+            two = one.children.findByName('two');
+            expect(two).not.to.be.null;
+
+            model_one = one.models.findByName('model_one');
+            model_two = two.models.findByName('model_two');
+
+            expect(one).not.to.be.null;
+            expect(two).not.to.be.null;
+
+            oneInfo.forEach(info => {
+               let member = model_one.members.at(info.index);
+               expect(member).not.to.be.null;
+               expect(member.name).to.be.equal(info.name);
+               expect(member.value.equals(info.value)).to.be.true;
+            });
+
+            twoInfo.forEach(info => {
+               let member = model_two.members.at(info.index);
+               expect(member).not.to.be.null;
+               expect(member.name).to.be.equal(info.name);
+               expect(member.value.equals(info.value)).to.be.true;
+            });
+
+            done();
+         })
+         .catch(err => {
+            done(err);
+         });
+   });
+
+    it('Instances', function (done) {
+      let proj = setup();
+
+      let one = proj.root.children.new('one');
+      let two = one.children.new('two');
+
+      let model_one = one.models.new('model_one');
+      let model_two = two.models.new('model_two');
+
+      let oneInfo = Fill.model(model_one);
+      let twoInfo = Fill.model(model_two);
+
+      one.instances.new('i_one', model_one);
+      let i_two = two.instances.new('i_two', model_two);
+      let field = i_two.fields.at(0);
+      field.value.value = false;
+
+      proj.commit()
+         .then(_ => {
+            proj = setup();
+            return proj.open();
+         })
+         .then(_ => {
+            one = proj.root.children.findByName('one');
+            expect(one).not.to.be.null;
+
+            two = one.children.findByName('two');
+            expect(two).not.to.be.null;
+
+            let i_one = one.instances.findByName('i_one');
+            expect(i_one).not.to.be.null;
+
+            let i_two = two.instances.findByName('i_two');
+            expect(i_two).not.to.be.null;
+
+            oneInfo.forEach(info => {
+               let field = i_one.fields.at(info.index);
+               expect(field).not.to.be.null;
+               expect(field.name).to.be.equal(info.name);
+               expect(field.value.equals(info.value)).to.be.true;
+               expect(field.isInheriting).to.be.true;
+            });
+
+            twoInfo.forEach(info => {
+               let field = i_two.fields.at(info.index);
+               expect(field).not.to.be.null;
+               expect(field.name).to.be.equal(info.name);
+               expect(field.value.equals(info.value)).to.be.true;
+
+               if(info.index == 0) {
+                  expect(field.isInheriting).to.be.false;
+               } else {
+                  expect(field.isInheriting).to.be.true;
+               }               
+            });
+
+            done();
+         })
+         .catch(err => {
+            done(err);
+         });
+   });
 })
