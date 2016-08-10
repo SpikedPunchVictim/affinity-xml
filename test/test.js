@@ -8,6 +8,7 @@ var gaia = require('gaia');
 var types = gaia.types;
 var gxml = require('../index.js');
 var rimraf = require('rimraf').sync;
+var Fill = gaia.test.fill;
 
 chai.use(spies);
 
@@ -24,47 +25,15 @@ function setup() {
 function teardown() {
    try {
       rimraf(testPath);
-   } catch(ex) {
+   } catch (ex) {
       // Ignore
    }
-   
+
 }
 
-class Fill {
-   static values() {
-      let result = [];
-      let primitives = [
-         types.bool.value(),
-         types.decimal.value(),
-         types.string.value(),
-         types.int.value(),
-         types.uint.value()
-      ];
+describe('Read <-> Write', function() {
+   this.timeout(0);
 
-      result = result.concat(primitives);
-
-      primitives.forEach(val => {
-         result.push(types.collection.value(val.type));
-      });
-
-      return result;
-   }
-
-   static model(mod) {
-      let result = [];
-      let index = 0;
-
-      Fill.values().forEach(val => {
-         let info = { name: `member_${index}`, index: index++, value: val };
-         mod.members.new(info.name, val);
-         result.push(info);
-      });
-
-      return result;      
-   }
-}
-
-describe('Read <-> Write', () => {
    afterEach(function () {
       teardown();
    })
@@ -150,7 +119,7 @@ describe('Read <-> Write', () => {
          });
    });
 
-    it('Instances', function (done) {
+   it('Instances', function (done) {
       let proj = setup();
 
       let one = proj.root.children.new('one');
@@ -199,11 +168,11 @@ describe('Read <-> Write', () => {
                expect(field.name).to.be.equal(info.name);
                expect(field.value.equals(info.value)).to.be.true;
 
-               if(info.index == 0) {
+               if (info.index == 0) {
                   expect(field.isInheriting).to.be.false;
                } else {
                   expect(field.isInheriting).to.be.true;
-               }               
+               }
             });
 
             done();

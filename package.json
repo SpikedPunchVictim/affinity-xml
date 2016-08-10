@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --recursive --reporter spec",
-    "up-gaia": "npm un gaia --save && npm i C:/_spv/Projects/js/gaia --save-dev"
+    "up-gaia": "npm un gaia --save && npm i ../gaia --save-dev"
   },
   "keywords": [
     "gaia",
@@ -23,7 +23,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-spies": "^0.7.1",
-    "gaia": "file:///C:\\_spv\\Projects\\js\\gaia",
+    "gaia": "file:///Users/william.hoopes/src/dev/gaia",
     "mocha": "^2.5.3"
   }
 }
