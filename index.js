@@ -1,33 +1,16 @@
-
-
-
-/*
-var gaia = require('gaia');
-var gxml = require('gaia-xml');
-
-gaia.use(gxml);
-
-gxml.add(project, directory);
-gxml remove(project);
-
-
-let proj = gxml.load('/some/path/to/project');
-
-
-*/
 'use strict';
-//------------------------------------------------------------------------
-var xml = require('xml2js');
-var fs = require('fs');
-var util = require('util');
-var path = require('path');
-var when = require('when');
-var walk = require('walk');
-var proj = require('./lib/project.js');
-var models = require('./lib/model.js');
-var instances = require('./lib/instances.js');
-var File = require('./lib/file.js');
-var values = require('./lib/values.js')
+
+var xml = require('xml2js'),
+   fs = require('fs'),
+   util = require('util'),
+   path = require('path'),
+   when = require('when'),
+   walk = require('walk'),
+   proj = require('./lib/project.js'),
+   models = require('./lib/model.js'),
+   instances = require('./lib/instances.js'),
+   File = require('./lib/file.js'),
+   values = require('./lib/values.js');
 
 var Events = {};
 var ProjectDirectoryMap = new Map();
@@ -172,11 +155,9 @@ function onCommit(project, cb) {
    .catch(err => cb(err));
 }
 
-//------------------------------------------------------------------------
-/*
+/*------------------------------------------------------------------------
 *
-*/
-//------------------------------------------------------------------------
+------------------------------------------------------------------------*/
 function onOpen(project, cb) {
    let cached = ProjectDirectoryMap.get(project);
    let directory = cached.directory;

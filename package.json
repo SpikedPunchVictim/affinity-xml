@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha --recursive --reporter spec",
+    "test:watch": "mocha --recursive --watch --reporter spec",
     "up-gaia": "npm un gaia --save && npm i ../gaia --save-dev"
   },
   "keywords": [
@@ -23,7 +24,6 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-spies": "^0.7.1",
-    "gaia": "file:///Users/william.hoopes/src/dev/gaia",
     "mocha": "^2.5.3"
   }
 }
