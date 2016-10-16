@@ -1,14 +1,14 @@
 'use strict';
 
-var path = require('path');
-var chai = require('chai');
-var spies = require('chai-spies');
-var expect = chai.expect;
-var gaia = require('gaia');
-var types = gaia.types;
-var gxml = require('../index.js');
-var rimraf = require('rimraf').sync;
-var Fill = gaia.test.fill;
+var path = require('path'),
+   chai = require('chai'),
+   spies = require('chai-spies'),
+   expect = chai.expect,
+   gaia = require('gaia'),
+   types = gaia.types,
+   gxml = require('../index.js'),
+   rimraf = require('rimraf').sync,
+   Fill = gaia.test.fill;
 
 chai.use(spies);
 
@@ -25,13 +25,13 @@ function setup() {
 function teardown() {
    try {
       rimraf(testPath);
-   } catch (ex) {
+   } catch(ex) {
       // Ignore
    }
 
 }
 
-describe('Read <-> Write', function() {
+describe('Read <-> Write', function () {
    this.timeout(0);
 
    afterEach(function () {
@@ -134,9 +134,8 @@ describe('Read <-> Write', function() {
       one.instances.new('i_one', model_one);
       let i_two = two.instances.new('i_two', model_two);
       let field = i_two.fields.at(0);
-      field.value.value = false;
-
-      proj.commit()
+      field.value.update(false)
+         .then(_ => proj.commit())
          .then(_ => {
             proj = setup();
             return proj.open();
@@ -166,11 +165,12 @@ describe('Read <-> Write', function() {
                let field = i_two.fields.at(info.index);
                expect(field).not.to.be.null;
                expect(field.name).to.be.equal(info.name);
-               expect(field.value.equals(info.value)).to.be.true;
 
-               if (info.index == 0) {
+               if(info.index == 0) {
+                  expect(field.value.equals(info.value)).to.be.false;
                   expect(field.isInheriting).to.be.false;
                } else {
+                  expect(field.value.equals(info.value)).to.be.true;    
                   expect(field.isInheriting).to.be.true;
                }
             });
