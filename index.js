@@ -23,8 +23,16 @@ process.on('uncaughtException', err => {
 /*
 * Loads a project from the specified path
 */
-function load(path) {
+function load(path, cb) {
+   let project = gaia.create();
+   add(project, path);
+   return onOpen(project, err => {
+      if(err) {
+         return cb(err);
+      }
 
+      cb(null, project);
+   });
 }
 
 //------------------------------------------------------------------------
