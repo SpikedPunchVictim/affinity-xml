@@ -4,20 +4,20 @@ var path = require('path'),
    chai = require('chai'),
    spies = require('chai-spies'),
    expect = chai.expect,
-   gaia = require('gaia'),
-   types = gaia.types,
+   affinity = require('affinity'),
+   types = affinity.types,
    gxml = require('../index.js'),
    rimraf = require('rimraf').sync,
-   Fill = gaia.test.fill;
+   Fill = affinity.test.fill;
 
 chai.use(spies);
 
 let testPath = path.join(__dirname, '__test');
 
 function setup() {
-   let proj = gaia.create();
+   let proj = affinity.create();
 
-   gaia.use(gxml);
+   affinity.use(gxml);
    gxml.add(proj, testPath);
    return proj;
 }

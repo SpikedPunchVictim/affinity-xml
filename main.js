@@ -1,13 +1,13 @@
 'use strict';
-var gaia = require('../gaia');
-var types = gaia.types;
+var affinity = require('../affinity');
+var types = affinity.types;
 var gxml = require('./index.js');
 
-gaia.use(gxml);
+affinity.use(gxml);
 
 let loadTesting = false;
 
-var project = gaia.create();
+var project = affinity.create();
 gxml.add(project, './__test');
 
 if(loadTesting) {
@@ -21,11 +21,11 @@ if(loadTesting) {
    var four = project.root.children.new('four');
 
    var model = project.root.models.new('model_one');
-   model.members.new('int_mem', gaia.types.int.value(64));
-   model.members.new('uint_mem', gaia.types.int.value(1024));
-   model.members.new('bool_mem', gaia.types.bool.value(true));
-   model.members.new('string_mem', gaia.types.string.value('some random string'));
-   model.members.new('dec_mem', gaia.types.decimal.value(14.32));
+   model.members.new('int_mem', affinity.types.int.value(64));
+   model.members.new('uint_mem', affinity.types.int.value(1024));
+   model.members.new('bool_mem', affinity.types.bool.value(true));
+   model.members.new('string_mem', affinity.types.string.value('some random string'));
+   model.members.new('dec_mem', affinity.types.decimal.value(14.32));
    var intCollectionMem = model.members.new('collection_int', types.collection.value(types.int.type()));
    intCollectionMem.value.add(types.int.value(1));
    intCollectionMem.value.add(types.int.value(2));
@@ -40,7 +40,7 @@ if(loadTesting) {
    // }
 
 
-   var collectionOfStringCollections = gaia.types.collection.value(gaia.types.collection.type(gaia.types.string.type()));
+   var collectionOfStringCollections = affinity.types.collection.value(affinity.types.collection.type(affinity.types.string.type()));
    var collectionCollectionMem = model.members.new('collection_of_string_collections', collectionOfStringCollections);
 
    var instance = project.root.instances.new('instance_one', model);

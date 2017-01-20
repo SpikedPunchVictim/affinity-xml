@@ -14,7 +14,7 @@ var xml = require('xml2js'),
 
 var Events = {};
 var ProjectDirectoryMap = new Map();
-var gaia = null;
+var affinity = null;
 
 process.on('uncaughtException', err => {
    console.log('Unhandles Exception: ', err, err.stack);
@@ -24,7 +24,7 @@ process.on('uncaughtException', err => {
 * Loads a project from the specified path
 */
 function load(path, cb) {
-   let project = gaia.create();
+   let project = affinity.create();
    add(project, path);
    return onOpen(project, err => {
       if(err) {
@@ -39,13 +39,13 @@ function load(path, cb) {
 function add(project, directory) {
    var cached = ProjectDirectoryMap.get(project);
 
-   if (!cached && gaia) {
+   if (!cached && affinity) {
       registerProject(project);
    }
 
    ProjectDirectoryMap.set(project, {
       directory: path.resolve(directory),
-      registered: gaia != null
+      registered: affinity != null
    });
 }
 
@@ -56,12 +56,12 @@ function remove(project) {
 }
 
 //------------------------------------------------------------------------
-function register(g) {
-   gaia = g;
-   Events = g.Events;
+function register(aff) {
+   affinity = aff;
+   Events = aff.Events;
 
    // Init the values module
-   values.init({ gaia: g });
+   values.init({ affinity: aff });
 
    ProjectDirectoryMap.forEach((value, key) => {
       if (!value.registered) {

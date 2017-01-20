@@ -24,6 +24,7 @@
     "xmlbuilder": "^4.2.1"
   },
   "devDependencies": {
+    "affinity": "file:///C:\\Projects\\affinity",
     "chai": "^3.5.0",
     "chai-spies": "^0.7.1",
     "mocha": "^2.5.3"

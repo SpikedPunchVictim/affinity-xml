@@ -1,2 +1,2 @@
-# gaia-xml
-XML importer/exporter for gaia projects
+# affinity-xml
+XML importer/exporter for affinity projects
