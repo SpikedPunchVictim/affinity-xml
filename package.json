@@ -1,16 +1,18 @@
 {
-  "name": "gaia-xml",
+  "name": "affinity-xml",
   "version": "1.0.0",
-  "description": "Provides XML saving/loading for gaia projects",
+  "description": "Provides XML saving/loading for affinity",
   "main": "index.js",
   "scripts": {
     "test": "mocha --recursive --reporter spec",
     "test:watch": "mocha --recursive --watch --reporter spec",
-    "up-gaia": "npm un gaia --save && npm i ../gaia --save-dev"
+    "up:aff": "npm un affinity --save && npm i ../affinity --save-dev"
   },
   "keywords": [
-    "gaia",
-    "xml"
+    "affinity",
+    "xml",
+    "data",
+    "modeling"
   ],
   "author": "William Hoopes",
   "license": "ISC",
