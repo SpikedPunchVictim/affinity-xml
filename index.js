@@ -92,9 +92,7 @@ function open(req) {
       throw new Error('No filepath is associated with Project: %j', project);
    }
 
-   req.await((context, cb) => {
-      onOpen(project, cb);
-   });
+   req.await((context, cb) => onOpen(project, cb));
 }
 
 //------------------------------------------------------------------------
@@ -106,9 +104,7 @@ function commit(req) {
       throw new Error('No filepath is associated with Project: %j', project);
    }
 
-   req.await((context, cb) => {
-      onCommit(project, cb);
-   });
+   req.await((context, cb) => onCommit(project, cb));
 }
 
 //------------------------------------------------------------------------
